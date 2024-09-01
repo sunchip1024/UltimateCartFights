@@ -293,7 +293,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2763804629291852290}
-  - component: {fileID: 5019771786152542270}
   m_Layer: 5
   m_Name: PlayerRoomUI
   m_TagString: Untagged
@@ -324,30 +323,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &5019771786152542270
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4224428835890160189}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9bec92df704cd7c4ea87a4a9fc7deef0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Nickname: {fileID: 8993114978223917639}
-  NameImage: {fileID: 3964474649738714560}
-  Ready: {fileID: 8251981105498416109}
-  Character: {fileID: 244230924183071409}
-  Blocked: {fileID: 8538718488579790240}
-  CharacterImages:
-  - {fileID: 706497982, guid: 5eabf395c7a4e9147862c72fa0dd047b, type: 3}
-  - {fileID: -2023508310, guid: 5eabf395c7a4e9147862c72fa0dd047b, type: 3}
-  - {fileID: -514969112, guid: 5eabf395c7a4e9147862c72fa0dd047b, type: 3}
-  - {fileID: 1249533830, guid: 5eabf395c7a4e9147862c72fa0dd047b, type: 3}
-  - {fileID: -1410835633, guid: 5eabf395c7a4e9147862c72fa0dd047b, type: 3}
-  - {fileID: 2079167495, guid: 5eabf395c7a4e9147862c72fa0dd047b, type: 3}
 --- !u!1 &8251981105498416109
 GameObject:
   m_ObjectHideFlags: 0

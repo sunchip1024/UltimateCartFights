@@ -432,7 +432,6 @@ GameObject:
   - component: {fileID: 5052720294169224819}
   - component: {fileID: 1414110355901800639}
   - component: {fileID: 7847215656979801153}
-  - component: {fileID: -6050492269899093705}
   m_Layer: 5
   m_Name: RoomItem
   m_TagString: Untagged
@@ -546,9 +545,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -6050492269899093705}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: RoomItem, Assembly-CSharp
-        m_MethodName: OnClickRoomItem
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -558,22 +557,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &-6050492269899093705
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4301765129428303448}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 966960f47cfe4494b85125c42711b481, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  title: {fileID: 1140332355268215871}
-  host: {fileID: 1941034330391959227}
-  capacity: {fileID: 1301159716419183387}
-  entrance: {fileID: 7847215656979801153}
 --- !u!1 &4839777566702949645
 GameObject:
   m_ObjectHideFlags: 0

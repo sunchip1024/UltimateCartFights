@@ -8372,6 +8372,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13da0e4d0b8c36149a8d4e2f246b6fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MainCamera: {fileID: 0}
 --- !u!1001 &1272059209
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10824,12 +10825,14 @@ MonoBehaviour:
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _runner: {fileID: 0}
   SortKey: 3596542965
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 1509072892}
+  _renderSource: 0
 --- !u!114 &1509072892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10842,6 +10845,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6418e28ef34345246ae24d5bb706957b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _runner: {fileID: 0}
+  _object: {fileID: 0}
+  InvokeRpc: 0
+  ObjectIndex: 0
+  WordOffset: 0
+  WordCount: 0
+  DefaultReplicated: 1
   SpawnPoints:
   - {fileID: 983981148}
   - {fileID: 399821262}
