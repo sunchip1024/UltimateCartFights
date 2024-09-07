@@ -261,6 +261,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6244768209362692490}
+  - component: {fileID: -6034293008763564689}
+  - component: {fileID: 2664923263736751574}
+  - component: {fileID: 5292701881411969473}
+  - component: {fileID: 2954184648546766586}
+  - component: {fileID: 6392101628278743351}
   m_Layer: 31
   m_Name: CartPrefab
   m_TagString: Untagged
@@ -286,6 +291,184 @@ Transform:
   - {fileID: 8202136326628527078}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &-6034293008763564689
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6307649920354300385}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 1
+--- !u!136 &2664923263736751574
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6307649920354300385}
+  m_Material: {fileID: 13400000, guid: c0fb4916658454b42a411034dc086a99, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.3
+  m_Height: 0.8
+  m_Direction: 2
+  m_Center: {x: 0, y: 0.3, z: -0.07}
+--- !u!114 &5292701881411969473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6307649920354300385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40b646a80776a974987f83a4a27b1685, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  accelerataion:
+    m_Name: Accelerataion
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 104e98ce-d2df-4530-b786-5e42271530f9
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 1D Axis
+      m_Id: 88ac6625-e57f-468e-abeb-a5861ba9ef61
+      m_Path: 1DAxis
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Accelerataion
+      m_Flags: 4
+    - m_Name: negative
+      m_Id: d5998898-96df-46fd-872d-a4583c6a9092
+      m_Path: <Keyboard>/s
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Accelerataion
+      m_Flags: 8
+    - m_Name: positive
+      m_Id: fd5ac2c2-4d30-4a0e-bb61-92f41dfcc80d
+      m_Path: <Keyboard>/w
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Accelerataion
+      m_Flags: 8
+    m_Flags: 0
+  steer:
+    m_Name: Steer
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: bdfc36e1-65ba-40a4-96c9-c403cbf7ebd8
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: WASD
+      m_Id: ff6d233e-0345-4843-a3f9-e4712278127c
+      m_Path: 1DAxis
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Steer
+      m_Flags: 4
+    - m_Name: negative
+      m_Id: f3561bb1-9523-42cb-b0ee-00e9f6eeec2b
+      m_Path: <Keyboard>/a
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Steer
+      m_Flags: 8
+    - m_Name: positive
+      m_Id: 60195848-f1ed-43a3-891b-1f361eb7e870
+      m_Path: <Keyboard>/d
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Steer
+      m_Flags: 8
+    m_Flags: 0
+  dash:
+    m_Name: Dash
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: 9b205dfb-bac8-4de6-8bca-e18ca3524b7f
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 2b151ae4-0ee1-44a8-b543-1132a9e15098
+      m_Path: <Keyboard>/q
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Dash
+      m_Flags: 0
+    m_Flags: 0
+--- !u!114 &2954184648546766586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6307649920354300385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 403f44472337a7c458f02e83680bf25e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxSpeed: 7
+  appliedSpeed: 0
+  cartInput: {fileID: 5292701881411969473}
+  rigidbody: {fileID: -6034293008763564689}
+--- !u!114 &6392101628278743351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6307649920354300385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 535e89b7fb9204b448b744f5b8b05254, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  renderer: {fileID: 8082539717472146708}
+  backCharacter: {fileID: 329445872161612528}
+  frontCharacter: {fileID: 6550918214751574977}
+  character: 3
+  color: 4
 --- !u!1 &7269842033377922299
 GameObject:
   m_ObjectHideFlags: 0
@@ -665,6 +848,12 @@ PrefabInstance:
       addedObject: {fileID: 7988406400204258486}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0f1d9245d7f45da4db8a23fdf28355a5, type: 3}
+--- !u!137 &8082539717472146708 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 137916109329169202, guid: 0f1d9245d7f45da4db8a23fdf28355a5,
+    type: 3}
+  m_PrefabInstance: {fileID: 8197407791035952678}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8202136326628527078 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4747124335109568, guid: 0f1d9245d7f45da4db8a23fdf28355a5,
