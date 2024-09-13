@@ -5,6 +5,9 @@ using UnityEngine;
 namespace UltimateCartFights.Utility {
     public class ResourceManager : MonoBehaviour {
 
+        [Header("Netowkr Objects")]
+        public GameObject Session;
+
         [Header("Character Sprites")]
         public List<Sprite> Characters;
 
