@@ -1,9 +1,9 @@
 using Fusion;
 using Fusion.Sockets;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UltimateCartFights.UI;
 using UltimateCartFights.Utility;
 using UnityEngine;
 
@@ -13,22 +13,20 @@ namespace UltimateCartFights.Network {
         #region Unity LifeCycle
 
         private static FusionSocket Instance = null;
-
-        public static NetworkRunner Runner { get; private set; } = null;
+        
+        protected static NetworkRunner Runner { get; private set; } = null;
 
         protected static NetworkStateMachine stateManager = new NetworkStateMachine();
 
         private void Awake() {
-            if(Instance != null) {
+            if (Instance != null) {
                 Destroy(this);
                 return;
             }
 
             Instance = this;
             DontDestroyOnLoad(Instance);
-        }
 
-        private void Start() {
             stateManager.Start();
         }
 
@@ -40,7 +38,7 @@ namespace UltimateCartFights.Network {
 
         #region Fusion Network Methods
 
-        protected static async void Open() {
+        protected static async Task Open() {
             // 만일 이미 실행중인 객체가 있다면 해당 객체를 제거한다
             if (Runner != null)
                 await Close();
@@ -59,13 +57,45 @@ namespace UltimateCartFights.Network {
             stateManager.StartState(STATE.LOADING_LOBBY);
         }
 
-        protected static async void JoinLobby() {
+        protected static async Task JoinLobby() {
             stateManager.StopState();
 
             StartGameResult result = await Runner.JoinSessionLobby(SessionLobby.ClientServer);
 
             if (!result.Ok)
                 throw new Exception(result.ErrorMessage);
+        }
+
+        protected static async Task CreateRoom(RoomInfo room) {
+            stateManager.StopState();
+
+            StartGameResult result = await Runner.StartGame(new StartGameArgs {
+                GameMode = GameMode.Host,
+                PlayerCount = room.MaxPlayer,
+                SessionProperties = GetRoomProperties(room),
+            });
+
+            if(!result.Ok)
+                throw new Exception(result.ErrorMessage);
+
+            stateManager.StartState(STATE.ROOM);
+        }
+
+        protected static async Task JoinRoom(RoomInfo room) {
+            stateManager.StopState();
+
+            StartGameResult result = await Runner.StartGame(new StartGameArgs {
+                GameMode = GameMode.Client,
+                SessionName = room.RoomID,
+                PlayerCount = room.MaxPlayer,
+                SessionProperties = GetRoomProperties(room),
+                EnableClientSessionCreation = false,
+            });
+
+            if(!result.Ok)
+                throw new Exception(result.ErrorMessage);
+
+            stateManager.StartState(STATE.ROOM);
         }
 
         protected static async Task Close() {
@@ -85,6 +115,19 @@ namespace UltimateCartFights.Network {
 
         #endregion
 
+        #region Other Method
+
+        private static Dictionary<string, SessionProperty> GetRoomProperties(RoomInfo room) {
+            Dictionary<string, SessionProperty> properties = new Dictionary<string, SessionProperty>();
+
+            properties["RoomName"] = room.RoomName;
+            properties["HostNickname"] = room.HostNickname;
+
+            return properties;
+        }
+
+        #endregion
+
         #region Lobby Event Callback
 
         // 로비 접속 즉시가 아니라 로비 방 목록을 받을 때 상태를 LOADING_LOBBY에서 LOBBY로 바꾼다
@@ -92,7 +135,11 @@ namespace UltimateCartFights.Network {
 
         public virtual void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) {
             if (isFirstSessionUpdate) {
+                stateManager.StopState();
                 stateManager.StartState(STATE.LOBBY);
+
+                PanelUI.Instance.RefreshRoomList();
+
                 isFirstSessionUpdate = false;
             }
         }
