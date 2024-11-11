@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace UltimateCartFights.Network {
-    public class RoomInfo : MonoBehaviour {
+    public class RoomInfo {
 
         public const int MAX_PLAYER = 6;
 

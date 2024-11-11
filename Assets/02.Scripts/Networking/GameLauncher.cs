@@ -2,6 +2,7 @@ using Fusion;
 using System;
 using System.Collections.Generic;
 using UltimateCartFights.UI;
+using UltimateCartFights.Utility;
 using UnityEngine;
 
 namespace UltimateCartFights.Network {
@@ -17,6 +18,13 @@ namespace UltimateCartFights.Network {
 
             // 로비 대기 씬으로 이동
             UnityEngine.SceneManagement.SceneManager.LoadScene("Lobby");
+
+            // FSM 실행
+            stateManager.Start();
+        }
+
+        private void Update() {
+            stateManager.Update();
         }
 
         #endregion
@@ -34,13 +42,24 @@ namespace UltimateCartFights.Network {
             } 
         }
 
+        public static SessionInfo GetSessionInfo() {
+            return Runner.SessionInfo;
+        }
+
+        public static bool IsHost() {
+            if (Runner == null) return false;
+            return Runner.IsServer;
+        } 
+
         #endregion
 
         #region Network Method
 
         public static async new void Open() {
             try {
+                stateManager.StopState();
                 await FusionSocket.Open();
+                stateManager.StartState(STATE.LOADING_LOBBY);
             } catch(Exception e) {
                 stateManager.Abort();
                 PopupUI.Instance.OpenError(e.Message);
@@ -49,6 +68,7 @@ namespace UltimateCartFights.Network {
 
         public static async new void JoinLobby() {
             try {
+                stateManager.StopState();
                 await FusionSocket.JoinLobby();
             } catch(Exception e) {
                 stateManager.Abort();
@@ -58,7 +78,9 @@ namespace UltimateCartFights.Network {
 
         public static async new void CreateRoom(RoomInfo room) {
             try {
+                stateManager.StopState();
                 await FusionSocket.CreateRoom(room);
+                stateManager.StartState(STATE.ROOM);
             } catch(Exception e) {
                 stateManager.Abort();
                 PopupUI.Instance.OpenError(e.Message);
@@ -67,7 +89,9 @@ namespace UltimateCartFights.Network {
 
         public static async new void JoinRoom(RoomInfo room) {
             try {
+                stateManager.StopState();
                 await FusionSocket.JoinRoom(room);
+                stateManager.StartState(STATE.ROOM);
             } catch (Exception e) {
                 stateManager.Abort();
                 PopupUI.Instance.OpenError(e.Message);
@@ -76,8 +100,10 @@ namespace UltimateCartFights.Network {
 
         public static async new void Close() {
             try {
+                stateManager.StopState();
                 await FusionSocket.Close();
-            } catch(Exception e) {
+                stateManager.StartState(STATE.CLOSED);
+            } catch (Exception e) {
                 stateManager.Abort();
                 PopupUI.Instance.OpenError(e.Message);
             }
@@ -123,7 +149,32 @@ namespace UltimateCartFights.Network {
 
         public override void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) {
             sessions = sessionList;
-            base.OnSessionListUpdated(runner, sessionList);
+
+            if(isFirstSessionUpdate) {
+                stateManager.StopState();
+
+                PanelUI.Instance.RefreshRoomList();
+                isFirstSessionUpdate = false;
+
+                stateManager.StartState(STATE.LOBBY);
+            }
+        }
+
+        #endregion
+
+        #region Room Event Method
+
+        public override void OnPlayerJoined(NetworkRunner runner, PlayerRef player) {
+            if (!runner.IsServer) return;
+
+            runner.Spawn(ResourceManager.Instance.Client, Vector3.zero, Quaternion.identity, player);
+        }
+
+        public override void OnPlayerLeft(NetworkRunner runner, PlayerRef player) {
+            if (!runner.IsServer) return;
+
+            ClientPlayer client = ClientPlayer.RemovePlayer(player);
+            runner.Despawn(client.Object);
         }
 
         #endregion

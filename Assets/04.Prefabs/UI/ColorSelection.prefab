@@ -87,6 +87,7 @@ GameObject:
   - component: {fileID: 2325210244351302058}
   - component: {fileID: 5544770385476681896}
   - component: {fileID: 5026097748390440350}
+  - component: {fileID: -2768663498681074505}
   m_Layer: 5
   m_Name: ColorSelection
   m_TagString: Untagged
@@ -196,9 +197,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: -2768663498681074505}
         m_TargetAssemblyTypeName: UltimateCartFights.UI.ColorSelectionUI, Assembly-CSharp
-        m_MethodName: 
+        m_MethodName: OnChangeColor
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -208,3 +209,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &-2768663498681074505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3800775795118837018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72165d5c53d54ca46b8861176b329346, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Color: {fileID: 5544770385476681896}
+  Block: {fileID: 4189573664116811624}

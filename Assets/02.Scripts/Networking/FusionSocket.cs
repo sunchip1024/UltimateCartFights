@@ -18,6 +18,9 @@ namespace UltimateCartFights.Network {
 
         protected static NetworkStateMachine stateManager = new NetworkStateMachine();
 
+        // 로비 접속 즉시가 아니라 로비 방 목록을 받을 때 상태를 LOADING_LOBBY에서 LOBBY로 바꾼다
+        protected static bool isFirstSessionUpdate = true;
+
         private void Awake() {
             if (Instance != null) {
                 Destroy(this);
@@ -26,12 +29,6 @@ namespace UltimateCartFights.Network {
 
             Instance = this;
             DontDestroyOnLoad(Instance);
-
-            stateManager.Start();
-        }
-
-        private void Update() {
-            stateManager.Update();
         }
 
         #endregion
@@ -43,8 +40,6 @@ namespace UltimateCartFights.Network {
             if (Runner != null)
                 await Close();
 
-            stateManager.StopState();
-
             // 룸 접속을 위한 NetworkRunner 객체를 생성한다
             GameObject runnerObject = Instantiate(ResourceManager.Instance.Session);
             DontDestroyOnLoad(runnerObject);
@@ -53,13 +48,9 @@ namespace UltimateCartFights.Network {
             Runner = runnerObject.GetComponent<NetworkRunner>();
             Runner.ProvideInput = true;
             Runner.AddCallbacks(Instance);
-
-            stateManager.StartState(STATE.LOADING_LOBBY);
         }
 
         protected static async Task JoinLobby() {
-            stateManager.StopState();
-
             StartGameResult result = await Runner.JoinSessionLobby(SessionLobby.ClientServer);
 
             if (!result.Ok)
@@ -67,8 +58,6 @@ namespace UltimateCartFights.Network {
         }
 
         protected static async Task CreateRoom(RoomInfo room) {
-            stateManager.StopState();
-
             StartGameResult result = await Runner.StartGame(new StartGameArgs {
                 GameMode = GameMode.Host,
                 PlayerCount = room.MaxPlayer,
@@ -77,13 +66,9 @@ namespace UltimateCartFights.Network {
 
             if(!result.Ok)
                 throw new Exception(result.ErrorMessage);
-
-            stateManager.StartState(STATE.ROOM);
         }
 
         protected static async Task JoinRoom(RoomInfo room) {
-            stateManager.StopState();
-
             StartGameResult result = await Runner.StartGame(new StartGameArgs {
                 GameMode = GameMode.Client,
                 SessionName = room.RoomID,
@@ -94,23 +79,17 @@ namespace UltimateCartFights.Network {
 
             if(!result.Ok)
                 throw new Exception(result.ErrorMessage);
-
-            stateManager.StartState(STATE.ROOM);
         }
 
         protected static async Task Close() {
             if (Runner == null)
                 return;
 
-            stateManager.StopState();
-
             await Runner.Shutdown();
             Destroy(Runner.gameObject);
             Runner = null;
 
-            isFirstSessionUpdate = false;
-
-            stateManager.StartState(STATE.CLOSED);
+            isFirstSessionUpdate = true;
         }
 
         #endregion
@@ -128,25 +107,9 @@ namespace UltimateCartFights.Network {
 
         #endregion
 
-        #region Lobby Event Callback
+        #region INetworkRunnerCallbacks
 
-        // 로비 접속 즉시가 아니라 로비 방 목록을 받을 때 상태를 LOADING_LOBBY에서 LOBBY로 바꾼다
-        private static bool isFirstSessionUpdate = true;
-
-        public virtual void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) {
-            if (isFirstSessionUpdate) {
-                stateManager.StopState();
-                stateManager.StartState(STATE.LOBBY);
-
-                PanelUI.Instance.RefreshRoomList();
-
-                isFirstSessionUpdate = false;
-            }
-        }
-
-        #endregion
-
-        #region Other INetworkRunnerCallbacks
+        public virtual void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) { }
 
         public virtual void OnConnectedToServer(NetworkRunner runner) { }
 

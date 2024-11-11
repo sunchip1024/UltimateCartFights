@@ -96,5 +96,17 @@ namespace UltimateCartFights.UI {
         }
 
         #endregion
+
+        // 게임룸 패널 UI 메서드
+        #region Room Panel UI
+
+        [Header("Room Panel UI")]
+        [SerializeField] private RoomPanelUI RoomUI;
+
+        public void InitializeRoom() => RoomUI.InitializeRoom();
+
+        public void LeaveRoom() => RoomUI.LeaveRoom();
+
+        #endregion
     }
 }
