@@ -9,14 +9,6 @@ namespace UltimateCartFights.Game {
         [SerializeField] private Image backCharacter;
         [SerializeField] private Image frontCharacter;
 
-        public int character;
-        public int color;
-
-        private void Start() {
-            SetCharacter(character);
-            SetColor(color);
-        }
-
         public void SetCharacter(int character) {
             backCharacter.sprite = ResourceManager.Instance.Characters[character];
             frontCharacter.sprite = ResourceManager.Instance.Characters[character];

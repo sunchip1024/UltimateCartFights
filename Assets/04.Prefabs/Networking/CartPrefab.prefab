@@ -266,6 +266,8 @@ GameObject:
   - component: {fileID: 5292701881411969473}
   - component: {fileID: 2954184648546766586}
   - component: {fileID: 6392101628278743351}
+  - component: {fileID: 8369373508763522203}
+  - component: {fileID: 3788881622892610889}
   m_Layer: 31
   m_Name: CartPrefab
   m_TagString: Untagged
@@ -448,6 +450,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 403f44472337a7c458f02e83680bf25e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _PlayerID: 0
   maxSpeed: 7
   appliedSpeed: 0
   cartInput: {fileID: 5292701881411969473}
@@ -467,8 +470,47 @@ MonoBehaviour:
   renderer: {fileID: 8082539717472146708}
   backCharacter: {fileID: 329445872161612528}
   frontCharacter: {fileID: 6550918214751574977}
-  character: 3
-  color: 4
+--- !u!114 &8369373508763522203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6307649920354300385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 687960278
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 2954184648546766586}
+  - {fileID: 3788881622892610889}
+--- !u!114 &3788881622892610889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6307649920354300385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a591d221a634417e9827eb58e17de84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncScale: 0
+  SyncParent: 1
+  _interpolationTarget: {fileID: 275729121107631342}
+  UsePreciseRotation: 0
+  UseRenderSleepThresholds: 1
+  RenderThresholds:
+    UseEnergy: 1
+    Position: 0.01
+    Rotation: 0.01
+    Scale: 0.01
 --- !u!1 &7269842033377922299
 GameObject:
   m_ObjectHideFlags: 0

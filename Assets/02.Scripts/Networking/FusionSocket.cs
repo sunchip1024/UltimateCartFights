@@ -3,7 +3,6 @@ using Fusion.Sockets;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UltimateCartFights.UI;
 using UltimateCartFights.Utility;
 using UnityEngine;
 
@@ -18,6 +17,8 @@ namespace UltimateCartFights.Network {
 
         protected static NetworkStateMachine stateManager = new NetworkStateMachine();
 
+        protected static SceneManager sceneManager;
+
         // 로비 접속 즉시가 아니라 로비 방 목록을 받을 때 상태를 LOADING_LOBBY에서 LOBBY로 바꾼다
         protected static bool isFirstSessionUpdate = true;
 
@@ -29,6 +30,9 @@ namespace UltimateCartFights.Network {
 
             Instance = this;
             DontDestroyOnLoad(Instance);
+
+            // SceneManager 컴포넌트 추가
+            sceneManager = GetComponent<SceneManager>();
         }
 
         #endregion
@@ -54,7 +58,7 @@ namespace UltimateCartFights.Network {
             StartGameResult result = await Runner.JoinSessionLobby(SessionLobby.ClientServer);
 
             if (!result.Ok)
-                throw new Exception(result.ErrorMessage);
+                throw new NetworkException(result.ShutdownReason);
         }
 
         protected static async Task CreateRoom(RoomInfo room) {
@@ -62,10 +66,11 @@ namespace UltimateCartFights.Network {
                 GameMode = GameMode.Host,
                 PlayerCount = room.MaxPlayer,
                 SessionProperties = GetRoomProperties(room),
+                SceneManager = sceneManager,
             });
 
             if(!result.Ok)
-                throw new Exception(result.ErrorMessage);
+                throw new NetworkException(result.ShutdownReason);
         }
 
         protected static async Task JoinRoom(RoomInfo room) {
@@ -75,15 +80,19 @@ namespace UltimateCartFights.Network {
                 PlayerCount = room.MaxPlayer,
                 SessionProperties = GetRoomProperties(room),
                 EnableClientSessionCreation = false,
+                SceneManager = sceneManager,
             });
 
             if(!result.Ok)
-                throw new Exception(result.ErrorMessage);
+                throw new NetworkException(result.ShutdownReason);
         }
 
         protected static async Task Close() {
             if (Runner == null)
                 return;
+
+            sceneManager.Shutdown();
+            sceneManager.LoadScene(SCENE.LOBBY);
 
             await Runner.Shutdown();
             Destroy(Runner.gameObject);
@@ -148,5 +157,17 @@ namespace UltimateCartFights.Network {
         public virtual void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) { }
 
         #endregion
+    }
+
+    public class NetworkException : Exception {
+
+        public ShutdownReason ShutdownReason { get; private set; } = ShutdownReason.Ok;
+
+        public NetworkException() : base() { }
+        public NetworkException(string message) : base(message) { }
+        public NetworkException(string message, Exception inner) : base(message, inner) { }
+        public NetworkException(ShutdownReason shutdownReason) : base() {
+            this.ShutdownReason = shutdownReason;
+        }
     }
 }

@@ -8,6 +8,7 @@ namespace UltimateCartFights.Utility {
         [Header("Netowkr Objects")]
         public GameObject Session;
         public GameObject Client;
+        public GameObject Cart;
 
         [Header("Character Sprites")]
         public List<Sprite> Characters;

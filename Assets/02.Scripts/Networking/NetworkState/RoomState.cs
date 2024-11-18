@@ -14,6 +14,8 @@ namespace UltimateCartFights.Network {
 
         public void Terminate() { 
             PanelUI.Instance.LeaveRoom();
+            
+            ChatNetwork.Close();
         }
     }
 }

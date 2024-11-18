@@ -108,5 +108,25 @@ namespace UltimateCartFights.UI {
         public void LeaveRoom() => RoomUI.LeaveRoom();
 
         #endregion
+
+        // 로딩 패널 UI 메서드
+        #region Loading Panel UI
+
+        [Header("Loading Panel UI")]
+        [SerializeField] private LoadingPanelUI LoadingUI;
+
+        public void InitializeLoading() {
+            LoadingUI.Initialize();
+        }
+
+        public void DisableLoading() {
+            LoadingUI.Disabled();
+        }
+
+        public void SetLoadingProgress(float progress) {
+            LoadingUI.SetLoadingProgress(progress);
+        }
+
+        #endregion
     }
 }

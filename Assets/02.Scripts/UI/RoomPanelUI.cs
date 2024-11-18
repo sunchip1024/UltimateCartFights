@@ -174,7 +174,7 @@ namespace UltimateCartFights.UI {
         public void OnStart() {
             StartButton.interactable = false;
 
-            Debug.Log("[ * Debug * ] Game Start!");
+            GameLauncher.LoadGame();
         }
 
         private void UpdateReady() {

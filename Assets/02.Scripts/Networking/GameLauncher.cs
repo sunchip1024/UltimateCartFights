@@ -1,6 +1,9 @@
 using Fusion;
+using Fusion.Sockets;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Xml;
 using UltimateCartFights.UI;
 using UltimateCartFights.Utility;
 using UnityEngine;
@@ -60,9 +63,9 @@ namespace UltimateCartFights.Network {
                 stateManager.StopState();
                 await FusionSocket.Open();
                 stateManager.StartState(STATE.LOADING_LOBBY);
-            } catch(Exception e) {
+            } catch(NetworkException e) {
                 stateManager.Abort();
-                PopupUI.Instance.OpenError(e.Message);
+                PopupUI.Instance.OpenError(GetShutdownMessage(e.ShutdownReason));
             }
         }
 
@@ -70,9 +73,9 @@ namespace UltimateCartFights.Network {
             try {
                 stateManager.StopState();
                 await FusionSocket.JoinLobby();
-            } catch(Exception e) {
+            } catch (NetworkException e) {
                 stateManager.Abort();
-                PopupUI.Instance.OpenError(e.Message);
+                PopupUI.Instance.OpenError(GetShutdownMessage(e.ShutdownReason));
             }
         }
 
@@ -81,9 +84,9 @@ namespace UltimateCartFights.Network {
                 stateManager.StopState();
                 await FusionSocket.CreateRoom(room);
                 stateManager.StartState(STATE.ROOM);
-            } catch(Exception e) {
+            } catch (NetworkException e) {
                 stateManager.Abort();
-                PopupUI.Instance.OpenError(e.Message);
+                PopupUI.Instance.OpenError(GetShutdownMessage(e.ShutdownReason));
             }
         }
 
@@ -92,9 +95,49 @@ namespace UltimateCartFights.Network {
                 stateManager.StopState();
                 await FusionSocket.JoinRoom(room);
                 stateManager.StartState(STATE.ROOM);
-            } catch (Exception e) {
+            } catch (NetworkException e) {
                 stateManager.Abort();
-                PopupUI.Instance.OpenError(e.Message);
+                PopupUI.Instance.OpenError(GetShutdownMessage(e.ShutdownReason));
+            }
+        }
+
+        public static void StartLoading() {
+            try {
+                stateManager.StopState();
+                stateManager.StartState(STATE.LOADING_GAME);
+            } catch (NetworkException e) {
+                stateManager.Abort();
+                PopupUI.Instance.OpenError(GetShutdownMessage(e.ShutdownReason));
+            }
+        }
+
+        public static void StartGame() {
+            try {
+                stateManager.StopState();
+                stateManager.StartState(STATE.GAME);
+            } catch (NetworkException e) {
+                stateManager.Abort();
+                PopupUI.Instance.OpenError(GetShutdownMessage(e.ShutdownReason));
+            }
+        }
+
+        public static void ShowResult() {
+            try {
+                stateManager.StopState();
+                stateManager.StartState(STATE.RESULT);
+            } catch (NetworkException e) {
+                stateManager.Abort();
+                PopupUI.Instance.OpenError(GetShutdownMessage(e.ShutdownReason));
+            }
+        }
+
+        public static void ReturnRoom() {
+            try {
+                stateManager.StopState();
+                stateManager.StartState(STATE.ROOM);
+            } catch (NetworkException e) {
+                stateManager.Abort();
+                PopupUI.Instance.OpenError(GetShutdownMessage(e.ShutdownReason));
             }
         }
 
@@ -103,29 +146,60 @@ namespace UltimateCartFights.Network {
                 stateManager.StopState();
                 await FusionSocket.Close();
                 stateManager.StartState(STATE.CLOSED);
-            } catch (Exception e) {
+            } catch (NetworkException e) {
                 stateManager.Abort();
-                PopupUI.Instance.OpenError(e.Message);
+                PopupUI.Instance.OpenError(GetShutdownMessage(e.ShutdownReason));
             }
+        }
+
+        #endregion
+
+        #region Scene Loading Method
+
+        public static void LoadGame() {
+            sceneManager.LoadScene(SCENE.GAME);
+        }
+
+        public static void LoadRoom() {
+            sceneManager.LoadScene(SCENE.ROOM);
         }
 
         #endregion
 
         #region Connection Event Method
 
+        public override void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) {
+            base.OnConnectRequest(runner, request, token);
+
+            NetworkSceneInfo scene;
+
+            // 현재 진행 중인 씬 정보 불러오기에 실패하면 연결하지 않는다
+            if (runner.TryGetSceneInfo(out scene) == false)
+                request.Refuse();
+            // 현재 로딩된 씬(= 게임 씬)이 있다면 연결하지 않는다
+            else if(scene.SceneCount > 0)
+                request.Refuse();
+            // 현재 게임 룸에 있다면 연결한다
+            else
+                request.Accept();
+        }
+
+        public override void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) {
+            base.OnConnectFailed(runner, remoteAddress, reason);
+            Open();
+        }
+
         // 네트워크가 종료될 때 실행되는 함수
         public override void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) {
             base.OnShutdown(runner, shutdownReason);
 
             // 정상적인 종료가 아니라면 오류 메세지를 띄운다
-            if (shutdownReason != ShutdownReason.Ok) {
+            if (shutdownReason != ShutdownReason.Ok)
                 PopupUI.Instance.OpenError(GetShutdownMessage(shutdownReason));
-                Close();
-            }
         }
 
         // 네트워크 종료 이유 메세지를 반환한다
-        private string GetShutdownMessage(ShutdownReason shutdownReason) {
+        private static string GetShutdownMessage(ShutdownReason shutdownReason) {
             switch(shutdownReason) {
                 case ShutdownReason.GameClosed:
                     return "방과의 접속이 끊겼습니다!";
@@ -135,6 +209,9 @@ namespace UltimateCartFights.Network {
 
                 case ShutdownReason.GameIsFull:
                     return "인원이 꽉 찼습니다!";
+
+                case ShutdownReason.ConnectionRefused:
+                    return "이미 게임을 시작했습니다!";
 
                 default:
                     return "오류가 발생했습니다!";

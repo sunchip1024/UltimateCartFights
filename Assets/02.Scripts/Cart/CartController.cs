@@ -1,9 +1,23 @@
+using Fusion;
+using System.Collections.Generic;
+using System.Linq;
+using UltimateCartFights.Network;
 using UnityEngine;
 
 namespace UltimateCartFights.Game {
-    public class CartController : MonoBehaviour {
+    public class CartController : NetworkBehaviour {
 
         #region Cart Properties
+
+        /* Cart List */
+
+        public static readonly List<CartController> Carts = new List<CartController>();
+
+        public static CartController Local { get; private set; } = null;
+
+        /* Game State Property */
+
+        [Networked] public int PlayerID { get; private set; }
 
         /* Cart Controller Property */
 
@@ -33,6 +47,61 @@ namespace UltimateCartFights.Game {
 
         #region Cart LifeCycle Method
 
+        private ChangeDetector changeDetector;
+
+        public override void Spawned() {
+            base.Spawned();
+
+            changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+            Carts.Add(this);
+
+            // 동일한 입력 권한을 가진 플레이어를 찾아 PlayerID를 초기화
+            ClientPlayer client = ClientPlayer.Players.FirstOrDefault(x => {
+                return x.Object.InputAuthority == Object.InputAuthority;
+            });
+
+            // 플레이어 ID 초기화
+            PlayerID = client.PlayerID;
+
+            // 카트 커스터마이징
+            CartCustom custom = GetComponent<CartCustom>();
+            custom.SetCharacter(client.Character);
+            custom.SetColor(client.CartColor);
+
+            // Local 및 카매라 설정
+            if (Object.HasInputAuthority) {
+                Local = this;
+                CartCamera.SetTarget(this);
+
+                Debug.Log($"[ * DEBUG * ] Camera Target : {PlayerID}");
+            }
+        }
+
+        public override void FixedUpdateNetwork() {
+            base.FixedUpdateNetwork();
+
+            input = cartInput.GetInput();
+
+            Move(input);
+            Steer(input);
+        }
+
+        public override void Render() {
+            base.Render();
+        }
+
+        private void OnDisable() {
+            if (Local == this)
+                Local = null;
+
+            Carts.Remove(this);
+
+            // 제거되는 카트를 카메라가 추적 중이라면 다음 카트를 추적
+            if (CartCamera.IsFocused(this))
+                CartCamera.SetTarget(Carts.First());
+        }
+
+        /*
         private void Awake() {
             CartCamera.SetTarget(this);
         }
@@ -43,9 +112,10 @@ namespace UltimateCartFights.Game {
             Move(input);
             Steer(input);
         }
+        */
 
         #endregion
-        
+
         #region Cart Control Method
 
         private void Move(InputData input) {
