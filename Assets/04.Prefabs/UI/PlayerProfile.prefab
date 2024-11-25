@@ -431,6 +431,7 @@ GameObject:
   - component: {fileID: 6348153808911547768}
   - component: {fileID: 7550226463779539361}
   - component: {fileID: 438236375478797064}
+  - component: {fileID: 7865629013931373678}
   m_Layer: 5
   m_Name: PlayerProfile
   m_TagString: Untagged
@@ -543,9 +544,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UltimateCartFights.UI.ProfileUI, Assembly-CSharp
-        m_MethodName: 
+      - m_Target: {fileID: 7865629013931373678}
+        m_TargetAssemblyTypeName: UltimateCartFights.UI.GameProfileUI, Assembly-CSharp
+        m_MethodName: OnClickObserving
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -555,3 +556,21 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &7865629013931373678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8655567641923658513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39b67255040647641b86d89c4b2c3c4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterImage: {fileID: 4377419148964266205}
+  knockoutImage: {fileID: 8110363591147611314}
+  nicknameText: {fileID: 4635611502375768270}
+  damageText: {fileID: 4722445171247348676}
+  INTEGER_FONT_SIZE: 72
+  DECIMAL_FONT_SIZE: 45

@@ -643,6 +643,7 @@ GameObject:
   - component: {fileID: 6075535980451924286}
   - component: {fileID: 7464257374144143987}
   - component: {fileID: 30422826766980268}
+  - component: {fileID: 2968852256872714762}
   m_Layer: 5
   m_Name: MainProfile
   m_TagString: Untagged
@@ -713,6 +714,24 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2968852256872714762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8343273430036673322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39b67255040647641b86d89c4b2c3c4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterImage: {fileID: 7283986649279139937}
+  knockoutImage: {fileID: 898633437596083634}
+  nicknameText: {fileID: 8538802290786070151}
+  damageText: {fileID: 647618674890101032}
+  INTEGER_FONT_SIZE: 90
+  DECIMAL_FONT_SIZE: 60
 --- !u!1 &8736361008609897529
 GameObject:
   m_ObjectHideFlags: 0

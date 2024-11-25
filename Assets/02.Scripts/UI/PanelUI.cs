@@ -1,4 +1,5 @@
 using AYellowpaper.SerializedCollections;
+using TMPro;
 using UltimateCartFights.Network;
 using UnityEngine;
 
@@ -125,6 +126,34 @@ namespace UltimateCartFights.UI {
 
         public void SetLoadingProgress(float progress) {
             LoadingUI.SetLoadingProgress(progress);
+        }
+
+        #endregion
+
+        // 게임 패널 UI 메서드
+        #region Game Panel UI
+
+        [Header("Game Panel UI")]
+        [SerializeField] private GamePanelUI GameUI;
+
+        public void InitializeGame() => GameUI.InitializeGameUI();
+
+        public void UpdateGame() => GameUI.UpdateGameUI();
+
+        public void OnGetDamaged(int playerID, float damage) => GameUI.OnGetDamaged(playerID, damage);
+
+        public void OnKnockout(int playerID) => GameUI.OnKnockout(playerID);
+
+        #endregion
+
+        // 결과 패널 UI 메서드
+        #region Result Panel UI
+
+        [Header("Result Panel UI")]
+        [SerializeField] private TMP_Text winnerText;
+
+        public void SetWinner(string winner) {
+            winnerText.text = winner;
         }
 
         #endregion

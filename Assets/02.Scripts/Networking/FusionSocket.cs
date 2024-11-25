@@ -1,4 +1,5 @@
 using Fusion;
+using Fusion.Addons.Physics;
 using Fusion.Sockets;
 using System;
 using System.Collections.Generic;
@@ -90,6 +91,8 @@ namespace UltimateCartFights.Network {
         protected static async Task Close() {
             if (Runner == null)
                 return;
+
+            Debug.Log("[ * Debug * ] Close Game!");
 
             sceneManager.Shutdown();
             sceneManager.LoadScene(SCENE.LOBBY);

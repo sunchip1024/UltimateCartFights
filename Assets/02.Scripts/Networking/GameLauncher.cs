@@ -2,8 +2,8 @@ using Fusion;
 using Fusion.Sockets;
 using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Xml;
+using System.Linq;
+using UltimateCartFights.Game;
 using UltimateCartFights.UI;
 using UltimateCartFights.Utility;
 using UnityEngine;
@@ -56,7 +56,7 @@ namespace UltimateCartFights.Network {
 
         #endregion
 
-        #region Network Method
+        #region Network Static Method
 
         public static async new void Open() {
             try {
@@ -66,6 +66,9 @@ namespace UltimateCartFights.Network {
             } catch(NetworkException e) {
                 stateManager.Abort();
                 PopupUI.Instance.OpenError(GetShutdownMessage(e.ShutdownReason));
+            } catch(Exception e) {
+                stateManager.Abort();
+                PopupUI.Instance.OpenError(e.Message);
             }
         }
 
@@ -76,6 +79,9 @@ namespace UltimateCartFights.Network {
             } catch (NetworkException e) {
                 stateManager.Abort();
                 PopupUI.Instance.OpenError(GetShutdownMessage(e.ShutdownReason));
+            } catch (Exception e) {
+                stateManager.Abort();
+                PopupUI.Instance.OpenError(e.Message);
             }
         }
 
@@ -87,6 +93,9 @@ namespace UltimateCartFights.Network {
             } catch (NetworkException e) {
                 stateManager.Abort();
                 PopupUI.Instance.OpenError(GetShutdownMessage(e.ShutdownReason));
+            } catch (Exception e) {
+                stateManager.Abort();
+                PopupUI.Instance.OpenError(e.Message);
             }
         }
 
@@ -98,6 +107,9 @@ namespace UltimateCartFights.Network {
             } catch (NetworkException e) {
                 stateManager.Abort();
                 PopupUI.Instance.OpenError(GetShutdownMessage(e.ShutdownReason));
+            } catch (Exception e) {
+                stateManager.Abort();
+                PopupUI.Instance.OpenError(e.Message);
             }
         }
 
@@ -108,6 +120,9 @@ namespace UltimateCartFights.Network {
             } catch (NetworkException e) {
                 stateManager.Abort();
                 PopupUI.Instance.OpenError(GetShutdownMessage(e.ShutdownReason));
+            } catch (Exception e) {
+                stateManager.Abort();
+                PopupUI.Instance.OpenError(e.Message);
             }
         }
 
@@ -118,6 +133,9 @@ namespace UltimateCartFights.Network {
             } catch (NetworkException e) {
                 stateManager.Abort();
                 PopupUI.Instance.OpenError(GetShutdownMessage(e.ShutdownReason));
+            } catch (Exception e) {
+                stateManager.Abort();
+                PopupUI.Instance.OpenError(e.Message);
             }
         }
 
@@ -128,6 +146,9 @@ namespace UltimateCartFights.Network {
             } catch (NetworkException e) {
                 stateManager.Abort();
                 PopupUI.Instance.OpenError(GetShutdownMessage(e.ShutdownReason));
+            } catch (Exception e) {
+                stateManager.Abort();
+                PopupUI.Instance.OpenError(e.Message);
             }
         }
 
@@ -138,6 +159,9 @@ namespace UltimateCartFights.Network {
             } catch (NetworkException e) {
                 stateManager.Abort();
                 PopupUI.Instance.OpenError(GetShutdownMessage(e.ShutdownReason));
+            } catch (Exception e) {
+                stateManager.Abort();
+                PopupUI.Instance.OpenError(e.Message);
             }
         }
 
@@ -149,6 +173,9 @@ namespace UltimateCartFights.Network {
             } catch (NetworkException e) {
                 stateManager.Abort();
                 PopupUI.Instance.OpenError(GetShutdownMessage(e.ShutdownReason));
+            } catch (Exception e) {
+                stateManager.Abort();
+                PopupUI.Instance.OpenError(e.Message);
             }
         }
 
@@ -196,6 +223,12 @@ namespace UltimateCartFights.Network {
             // 정상적인 종료가 아니라면 오류 메세지를 띄운다
             if (shutdownReason != ShutdownReason.Ok)
                 PopupUI.Instance.OpenError(GetShutdownMessage(shutdownReason));
+
+            // 아직 Closed 혹은 LOADING_LOBBY 상태가 아니라면 로비로 돌아간다
+            if (stateManager.State == STATE.NONE) return;
+            if (stateManager.State == STATE.CLOSED) return;
+            if (stateManager.State == STATE.LOADING_LOBBY) return;
+            Open();
         }
 
         // 네트워크 종료 이유 메세지를 반환한다
@@ -248,10 +281,67 @@ namespace UltimateCartFights.Network {
         }
 
         public override void OnPlayerLeft(NetworkRunner runner, PlayerRef player) {
+            if(stateManager.State == STATE.GAME) {
+                // 나간 플레이어의 카트를 찾아 탈락 처리
+                CartController cart = CartController.Carts.FirstOrDefault(x => x.Object.InputAuthority == player);
+                if (cart != null) OnKnockout(cart.PlayerID);
+            }
+
             if (!runner.IsServer) return;
 
             ClientPlayer client = ClientPlayer.RemovePlayer(player);
             runner.Despawn(client.Object);
+        }
+
+        #endregion
+
+        #region Game Event Method
+
+        public static int WinnerID = -1;
+
+        public static void OnGetDamaged(int playerID, float damage) {
+            // 해당 플레이어 프로필의 누적 데미지 UI 업데이트
+            PanelUI.Instance.OnGetDamaged(playerID, damage);
+
+            // 해당 플레이어가 제한 데미지보다 더 많이 누적되었다면 탈락처리
+            if (damage >= CartController.DAMAGE_LIMIT)
+                OnKnockout(playerID);
+        }
+
+        private static void OnKnockout(int playerID) {
+            // 남은 카트가 하나라면 제거하지 않는다
+            if (CartController.Carts.Count == 1) return;
+
+            // 해당 플레이어 탈락 표시
+            PanelUI.Instance.OnKnockout(playerID);
+
+
+            // Host만 해당 카트를 찾아 제거 후 프로필 UI 업데이트
+            if (Runner.IsServer) {
+                CartController cart = CartController.Carts.FirstOrDefault(x => x.PlayerID == playerID);
+                if (cart != null)
+                    Runner.Despawn(cart.Object);
+            }
+            
+            // 남은 카트가 하나라면 게임을 종료한다
+            CheckGameEnded();
+        }
+
+        public static void CheckGameEnded() {
+            if (CartController.Carts.Count > 1) return;
+
+            // 마지막 남은 카트 정보를 가져온다
+            CartController cart = CartController.Carts.First();
+            cart.IsGameStarted = false;
+            RPC_SetWinner(Runner, cart.PlayerID);
+        }
+
+        [Rpc]
+        public static void RPC_SetWinner(NetworkRunner runner, int winner) {
+            Debug.Log($"[ * Debug * ] Winner : {winner}");
+
+            WinnerID = winner;
+            ShowResult();
         }
 
         #endregion

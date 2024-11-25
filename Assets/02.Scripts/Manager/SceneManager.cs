@@ -105,6 +105,7 @@ namespace UltimateCartFights.Network {
 
             // 비동기적으로 씬 로딩을 진행한다
             AsyncOperation op = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(Scenes[SCENE.LOBBY]);
+            yield return null;
 
             // 씬 로딩이 완료될 때까지 기다린다
             while(!op.isDone) {
